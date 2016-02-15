@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/sparkjs/1/spark.min.js"></script>
+    <script>
+      function loginCallback(err, body) {
+        if (err) {
+          console.log("Error: ", err);
+        }
+        if (body) {
+          console.log("Body: ", body);
+        }
+      }
+
+      function subscriptionCallback(data) {
+        if (data) {
+          console.log("subscriptCallback: ", data);
+        }
+      }
+
+      spark.login({ accessToken: "a8d4117ee3d723ff763166149c32f2c25508fd99"}, loginCallback );
+
+      spark.listDevices().then(function (devices) {
+        console.log(devices);
+      });
+
+      spark.onEvent("test", subscriptionCallback);
+
+    </script>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <div>
+    </div>
+    <div>
+    </div>
+  </body>
+</html>
