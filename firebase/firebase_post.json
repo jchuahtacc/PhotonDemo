@@ -1,0 +1,10 @@
+{
+  "event" : "firebase_post",
+  "url" : "https://tacc-photon-demo.firebaseio.com/.json",
+  "requestType" : "POST",
+  "json" : {
+    "my_data" : "{{my_data}}"
+  },
+  "mydevices" : true,
+  "noDefaults" : true
+}
