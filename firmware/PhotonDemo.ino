@@ -1,7 +1,7 @@
 #include "Adafruit_Sensor.h"
 #include "Adafruit_MMA8451.h"
 
-#define   INTERRUPT1  2
+#define   INT2  D3
 
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
@@ -17,6 +17,14 @@ void setup() {
     while(1);       // infinite loop to "halt" the device if accelerometer fails to init
   }
   Serial.println("MMA8451 initialized");
+  pinMode(INT2, INPUT);
+  attachInterrupt(INT2, ISR, RISING);
+}
+
+void ISR() {
+  Serial.println("interrupt!");
+  // clear interrupt source
+  uint8_t interrupts = mma.getInterruptSource();
 }
 
 void publishAccelerometer() {
@@ -42,8 +50,12 @@ void publishAccelerometer() {
   Particle.publish(firebase_event, json);
 }
 
+void checkInterrupt() {
+}
+
 void loop() {
   mma.getEvent(&event);
   publishAccelerometer();
+  checkInterrupt();
   delay(1000);
 }

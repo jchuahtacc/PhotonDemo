@@ -99,19 +99,42 @@ bool Adafruit_MMA8451::begin(uint8_t i2caddr) {
 
   while (readRegister8(MMA8451_REG_CTRL_REG2) & 0x40);
 
+  // 400 hz, standby mode
+  writeRegister8(MMA8451_REG_CTRL_REG1, 0x08);
   // enable 4G range
   writeRegister8(MMA8451_REG_XYZ_DATA_CFG, MMA8451_RANGE_4_G);
   // High res
   writeRegister8(MMA8451_REG_CTRL_REG2, 0x02);
-  // DRDY on INT1
-  writeRegister8(MMA8451_REG_CTRL_REG4, 0x01);
-  writeRegister8(MMA8451_REG_CTRL_REG5, 0x01);
+  // DRDY on INT1 (*** don't care about data being ready ***)
+//  writeRegister8(MMA8451_REG_CTRL_REG4, 0x01);
+//  writeRegister8(MMA8451_REG_CTRL_REG5, 0x01);
 
   // Turn on orientation config
   writeRegister8(MMA8451_REG_PL_CFG, 0x40);
 
+
+  // detect single and double taps
+  writeRegister8(MMA8451_REG_PULSE_CFG, 0x15);
+  // detect all three axes, at 4G, 64 counts at 800 mHz
+  writeRegister8(MMA8451_REG_PULSE_THSX, 0x3A);
+  writeRegister8(MMA8451_REG_PULSE_THSY, 0x3A);
+  writeRegister8(MMA8451_REG_PULSE_THSZ, 0x3A);
+  // Pulse time limit to 50 ms (80 counts at 400mHz)
+  writeRegister8(MMA8451_REG_PULSE_TMLT, 0x50);
+  // Pulse latency of 300ms (240 counts at 400mHz)
+  writeRegister8(MMA8451_REG_PULSE_LTCY, 0xF0);
+  // Pulse window for second tap of 200 ms, or 160 counts at 800mHz
+  //writeRegister8(MMA8451_REG_PULSE_WIND, 0xA0);
+  // Enable pulse interrupt
+  writeRegister8(MMA8451_REG_CTRL_REG4, 0x08);
+  // Interrupt for pulses routed to INT2
+  writeRegister8(MMA8451_REG_CTRL_REG5, 0x00);
+
   // Activate at max rate, low noise mode
-  writeRegister8(MMA8451_REG_CTRL_REG1, 0x01 | 0x04);
+  uint8_t reg1 = readRegister8(MMA8451_REG_CTRL_REG1);
+  reg1 = reg1 | 0x01;
+  writeRegister8(MMA8451_REG_CTRL_REG1, reg1);
+
 
   /*
   for (uint8_t i=0; i<0x30; i++) {
@@ -181,6 +204,25 @@ mma8451_range_t Adafruit_MMA8451::getRange(void)
 {
   /* Read the data format register to preserve bits */
   return (mma8451_range_t)(readRegister8(MMA8451_REG_XYZ_DATA_CFG) & 0x03);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief  Gets the interrupt source register
+*/
+/**************************************************************************/
+uint8_t Adafruit_MMA8451::getInterruptSource(void) {
+  return readRegister8(MMA8451_REG_INT_SOURCE);
+}
+
+/**************************************************************************/
+/*!
+    @brief  Expose a register value
+*/
+/**************************************************************************/
+uint8_t Adafruit_MMA8451::getRegister(uint8_t reg) {
+  return readRegister8(reg);
 }
 
 /**************************************************************************/

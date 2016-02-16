@@ -44,7 +44,34 @@
 #define MMA8451_REG_CTRL_REG4     0x2D
 #define MMA8451_REG_CTRL_REG5     0x2E
 
+// Tap Detection constants (See Freescale document AN4072)
+#define MMA8451_REG_LPF           0x0F
+#define MMA8451_REG_PULSE_CFG     0x21
+#define MMA8451_REG_PULSE_THSX    0x23
+#define MMA8451_REG_PULSE_THSY    0x24
+#define MMA8451_REG_PULSE_THSZ    0x25
+#define MMA8451_REG_PULSE_TMLT    0x26
+#define MMA8451_REG_PULSE_LTCY    0x27
+#define MMA8451_REG_PULSE_WIND    0x28
+#define MMA8451_REG_INT_SOURCE    0x2C
 
+typedef enum
+{
+  MMA8451_SINGLE_TAP          = 0b01010101,
+  MMA8451_DOUBLE_TAP          = 0b01101010,
+  MMA8451_SINGLE_DOUBLE_TAP   = 0b01111111
+} mma8451_tap_t;
+
+typedef enum
+{
+  MMA8451_SRC_DRDY            =   0b00000001,
+  MMA8451_SRC_FF_MT           =   0b00000100,
+  MMA8451_SRC_PULSE           =   0b00001000,
+  MMA8451_SRC_LNDPRT          =   0b00010000,
+  MMA8451_SRC_TRANS           =   0b00100000,
+  MMA8451_SRC_FIFO            =   0b01000000,
+  MMA8451_SRC_ASLP            =   0b10000000
+} mma8451_int_source_t;
 
 #define MMA8451_PL_PUF            0
 #define MMA8451_PL_PUB            1
@@ -98,6 +125,9 @@ class Adafruit_MMA8451
 
   void setDataRate(mma8451_dataRate_t dataRate);
   mma8451_dataRate_t getDataRate(void);
+
+  uint8_t getInterruptSource(void);
+  uint8_t getRegister(uint8_t);
 
 #ifdef USE_SENSOR
   bool getEvent(sensors_event_t *event);
