@@ -6,7 +6,11 @@
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
 sensors_event_t event;
-String firebase_event = "firebase_post";
+
+String firebase_post = "firebase_post";
+String firebase_delete = "firebase_delete";
+
+volatile bool clicked = false;
 
 void setup() {
   Serial.begin(9600); // Enable serial on USB port
@@ -19,12 +23,16 @@ void setup() {
   Serial.println("MMA8451 initialized");
   pinMode(INT2, INPUT);
   attachInterrupt(INT2, ISR, RISING);
+  Serial.println("Waiting for first click");
+  while (!clicked) delay(500);
+  Serial.println("Received first click");
 }
 
 void ISR() {
   Serial.println("interrupt!");
   // clear interrupt source
   uint8_t interrupts = mma.getInterruptSource();
+  clicked = true;
 }
 
 void publishAccelerometer() {
@@ -38,6 +46,7 @@ void publishAccelerometer() {
   json.concat(String(event.acceleration.z));
   json.concat(String("\"}"));
   Serial.println(json);
+
   /*
   Hey, look! Garbage collected String class means no memory leaks!
   */
@@ -46,16 +55,17 @@ void publishAccelerometer() {
   Serial.print("Free memory: ");
   Serial.println(freeMem);
   */
-  // Call our firebase_post webhook with the json data to POST
-  Particle.publish(firebase_event, json);
-}
 
-void checkInterrupt() {
+  // Call our firebase_post webhook with the json data to POST
+  Particle.publish(firebase_post, json);
 }
 
 void loop() {
+  if (clicked) {
+    Particle.publish(firebase_delete);
+    clicked = false;
+  }
   mma.getEvent(&event);
   publishAccelerometer();
-  checkInterrupt();
   delay(1000);
 }

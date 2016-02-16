@@ -1,0 +1,7 @@
+{
+  "event" : "firebase_delete",
+  "url" : "https://tacc-photon-demo.firebaseio.com/.json",
+  "requestType" : "DELETE",
+  "mydevices" : true,
+  "noDefaults" : true
+}
