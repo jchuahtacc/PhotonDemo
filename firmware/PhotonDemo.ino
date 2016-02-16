@@ -6,7 +6,7 @@
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
 sensors_event_t event;
-
+String firebase_event = "firebase_post";
 
 void setup() {
   Serial.begin(9600); // Enable serial on USB port
@@ -38,6 +38,8 @@ void publishAccelerometer() {
   Serial.print("Free memory: ");
   Serial.println(freeMem);
   */
+  // Call our firebase_post webhook with the json data to POST
+  Particle.publish(firebase_event, json);
 }
 
 void loop() {
