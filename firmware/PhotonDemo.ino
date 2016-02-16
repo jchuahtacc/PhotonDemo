@@ -5,6 +5,9 @@
 
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
+sensors_event_t event;
+
+
 void setup() {
   Serial.begin(9600); // Enable serial on USB port
   Serial.println("Hello, friend.");
@@ -18,6 +21,15 @@ void setup() {
 }
 
 void loop() {
-
-
+  mma.getEvent(&event);
+  Serial.print("X ");
+  Serial.print(event.acceleration.x);
+  Serial.print("\t");
+  Serial.print("Y ");
+  Serial.print(event.acceleration.y);
+  Serial.print("\t");
+  Serial.print("Z ");
+  Serial.print(event.acceleration.z);
+  Serial.print("\t");
+  delay(1000);
 }
