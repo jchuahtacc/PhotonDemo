@@ -17,19 +17,31 @@ void setup() {
     while(1);       // infinite loop to "halt" the device if accelerometer fails to init
   }
   Serial.println("MMA8451 initialized");
+}
 
+void publishAccelerometer() {
+  // Construct json to send
+  String json = "";
+  json.concat(String("{\"x\" : \""));
+  json.concat(String(event.acceleration.x));
+  json.concat(String("\", \"y\" : \""));
+  json.concat(String(event.acceleration.y));
+  json.concat(String("\", \"z\" : \""));
+  json.concat(String(event.acceleration.z));
+  json.concat(String("\"}"));
+  Serial.println(json);
+  /*
+  Hey, look! Garbage collected String class means no memory leaks!
+  */
+  /*
+  uint32_t freeMem = System.freeMemory();
+  Serial.print("Free memory: ");
+  Serial.println(freeMem);
+  */
 }
 
 void loop() {
   mma.getEvent(&event);
-  Serial.print("X ");
-  Serial.print(event.acceleration.x);
-  Serial.print("\t");
-  Serial.print("Y ");
-  Serial.print(event.acceleration.y);
-  Serial.print("\t");
-  Serial.print("Z ");
-  Serial.print(event.acceleration.z);
-  Serial.print("\t");
+  publishAccelerometer();
   delay(1000);
 }
