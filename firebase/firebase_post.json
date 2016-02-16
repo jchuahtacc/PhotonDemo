@@ -3,7 +3,9 @@
   "url" : "https://tacc-photon-demo.firebaseio.com/.json",
   "requestType" : "POST",
   "json" : {
-    "my_data" : "{{my_data}}"
+    "x" : "{{x}}",
+    "y" : "{{y}}",
+    "z" : "{{z}}"
   },
   "mydevices" : true,
   "noDefaults" : true
