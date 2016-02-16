@@ -7,7 +7,7 @@ Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
 sensors_event_t event;
 
-String firebase_post = "firebase_post";
+String firebase_patch = "firebase_patch";
 String firebase_delete = "firebase_delete";
 
 volatile bool clicked = false;
@@ -32,7 +32,7 @@ void ISR() {
   Serial.println("interrupt!");
   // clear interrupt source
   uint8_t interrupts = mma.getInterruptSource();
-  clicked = true;
+  clicked = !clicked;
 }
 
 void publishAccelerometer() {
@@ -57,15 +57,23 @@ void publishAccelerometer() {
   */
 
   // Call our firebase_post webhook with the json data to POST
-  Particle.publish(firebase_post, json);
+  Particle.publish(firebase_patch, json);
+}
+
+void publishToDashboard() {
+  Particle.variable("x", String(event.acceleration.x));
+  Particle.variable("y", String(event.acceleration.y));
+  Particle.variable("z", String(event.acceleration.z));
 }
 
 void loop() {
   if (clicked) {
-    Particle.publish(firebase_delete);
-    clicked = false;
+    Serial.println("publishing");
+    mma.getEvent(&event);
+    publishAccelerometer();
+  //  publishToDashboard();
+  } else {
+    Serial.println("quiet");
   }
-  mma.getEvent(&event);
-  publishAccelerometer();
-  delay(1000);
+  delay(2000);
 }

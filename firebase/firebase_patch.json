@@ -1,0 +1,12 @@
+{
+  "event" : "firebase_patch",
+  "url" : "https://tacc-photon-demo.firebaseio.com/.json",
+  "requestType" : "PATCH",
+  "json" : {
+    "x" : "{{x}}",
+    "y" : "{{y}}",
+    "z" : "{{z}}"
+  },
+  "mydevices" : true,
+  "noDefaults" : true
+}
